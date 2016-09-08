@@ -5,6 +5,7 @@
   "main": "server/main.js",
   "dependencies": {
     "install": "^0.8.1",
+    "requirejs": "^2.3.1",
     "nodejs-websocket": "^1.6.0"
   },
   "devDependencies": {},
