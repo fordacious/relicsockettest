@@ -1,6 +1,7 @@
 define([
-    'common/physics/physicsObject'
-], function (PhysicsObject) {
+    'common/physics/physicsObject',
+    'client/colorutils'
+], function (PhysicsObject, ColorUtils) {
     return function (player) {
         this.owner = player;
         this.physics = new PhysicsObject();
@@ -23,7 +24,7 @@ define([
             var centerY = this.physics.position.y;
             context.beginPath();
             context.arc(centerX, centerY, this.radius, 0, 2 * Math.PI, false);
-            context.fillStyle = '#' + (this.owner.color&0xffffff).toString(16);
+            context.fillStyle = ColorUtils.toRGB(this.owner.color);
             context.fill();
         }
     };

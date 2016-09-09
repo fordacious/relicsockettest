@@ -56,7 +56,7 @@ module.exports = function () {
             }
         }.bind(this));
 
-        // TODO crash on tab close
+        // TODO close game on all players leave
         conn.on("close", function (code, reason) {
             console.log(conn.headers.origin);
             delete this.connections[playerId];

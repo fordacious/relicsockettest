@@ -1,4 +1,5 @@
 define(function(){
+    // sent by server
     var serverEvents = [
         "S_CONNECTION_ACCEPTED",
         "S_PLAYER_JOIN",
@@ -11,17 +12,18 @@ define(function(){
         "S_OBJECT_POSITION_UPDATE",
     ];
 
+    // sent by client
     var clientEvents = [
         "C_GAME_JOIN_REQUEST",
         "C_PLAYER_INFO",
         "C_FIRE_WEAPON",
         "C_PLAYER_ORIENTATION",
         "C_BOOST",
+        "C_BRAKE",
         "C_LEFT",
         "C_RIGHT",
         "C_UP",
         "C_DOWN",
-        "C_BRAKE"
     ];
 
     function preparenames (obj) {

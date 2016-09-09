@@ -1,7 +1,7 @@
 define(function () {
     return function Vector2 (x, y) {
-        this.x = x | 0;
-        this.y = y | 0;
+        this.x = x || 0;
+        this.y = y || 0;
         this.magnitude = function () {
             return Math.sqrt(this.x*this.x+this.y*this.y);
         }
@@ -12,8 +12,17 @@ define(function () {
             var y = this.y;
             return new Vector2(cos*x - sin*y, sin*x + cos*y);
         }
-        this.add = function (p2){
+        this.add = function (p2) {
             return new Vector2(this.x + p2.x, this.y + p2.y);
+        }
+        this.adds = function (s) {
+            return new Vector2(this.x + s, this.y + s);
+        }
+        this.muls = function (s) {
+            return new Vector2(this.x * s, this.y * s);
+        }
+        this.normalize = function () {
+            return this.muls(1 / this.magnitude());
         }
         // TODO functions
     }

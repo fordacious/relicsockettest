@@ -48,6 +48,13 @@ function InputSession(conn) {
             this.onDownKeyChange();
         }
     };
+    session[NetUtils.events.C_BOOST] = function (isDown) {
+        old = this.inputState.KEY_BOOST;
+        this.inputState.KEY_BOOST = isDown;
+        if (old !== isDown) {
+            this.onBoostKeyChange();
+        }
+    };
     session[NetUtils.events.C_BRAKE] = function (isDown) {
         old = this.inputState.KEY_BRAKE;
         this.inputState.KEY_BRAKE = isDown;

@@ -10,6 +10,7 @@ define([
         this.lastOrientationEventTime = 0;
 
         // TODO attach and detatch
+        // TOOD AI player
         window.addEventListener("mousedown", onMouseDown.bind(this), false);
         window.addEventListener("mouseup", onMouseUp.bind(this), false);
         window.addEventListener("mousemove", onMouseMove.bind(this), false);
@@ -34,36 +35,36 @@ define([
             onMouseMoveCallback(e.pageX, e.pageY);
         }
 
+        function keyControl(is, key, down, event) {
+              old = is[key];
+              is[key] = down;
+              if (old !== is.key) {
+                  NetUtils.send(gameSocket, event, [is[key]]);
+              }
+        }
+
+        // TODO proper key binding
         function onKeyDown(event) {
           var keyCode = event.keyCode;
+          console.log (keyCode);
           switch (keyCode) {
             case 68: //d
-              old = this.inputState.KEY_RIGHT;
-              this.inputState.KEY_RIGHT = true;
-              if (old !== this.inputState.KEY_RIGHT) {
-                  NetUtils.send(gameSocket, NetUtils.events.C_RIGHT, [this.inputState.KEY_RIGHT]);
-              }
+              keyControl(this.inputState, 'KEY_RIGHT', true, NetUtils.events.C_RIGHT);
               break;
             case 83: //s
-              old = this.inputState.KEY_DOWN;
-              this.inputState.KEY_DOWN = true;
-              if (old !== this.inputState.KEY_DOWN) {
-                  NetUtils.send(gameSocket, NetUtils.events.C_DOWN, [this.inputState.KEY_DOWN]);
-              }
+              keyControl(this.inputState, 'KEY_DOWN', true, NetUtils.events.C_DOWN);
               break;
             case 65: //a
-              old = this.inputState.KEY_LEFT;
-              this.inputState.KEY_LEFT = true;
-              if (old !== this.inputState.KEY_LEFT) {
-                  NetUtils.send(gameSocket, NetUtils.events.C_LEFT, [this.inputState.KEY_LEFT]);
-              }
+              keyControl(this.inputState, 'KEY_LEFT', true, NetUtils.events.C_LEFT);
               break;
             case 87: //w
-              old = this.inputState.KEY_UP;
-              this.inputState.KEY_UP = true;
-              if (old !== this.inputState.KEY_UP) {
-                  NetUtils.send(gameSocket, NetUtils.events.C_UP, [this.inputState.KEY_UP]);
-              }
+              keyControl(this.inputState, 'KEY_UP', true, NetUtils.events.C_UP);
+              break;
+            case 32: //space
+              keyControl(this.inputState, 'KEY_BOOST', true, NetUtils.events.C_BOOST);
+              break;
+            case 16: //shift
+              keyControl(this.inputState, 'KEY_BRAKE', true, NetUtils.events.C_BRAKE);
               break;
           }
         };
@@ -73,32 +74,22 @@ define([
 
           switch (keyCode) {
             case 68: //d
-              old = this.inputState.KEY_RIGHT;
-              this.inputState.KEY_RIGHT = false;
-              if (old !== this.inputState.KEY_RIGHT) {
-                  NetUtils.send(gameSocket, NetUtils.events.C_RIGHT, [this.inputState.KEY_RIGHT]);
-              }
+              keyControl(this.inputState, 'KEY_RIGHT', false, NetUtils.events.C_RIGHT);
               break;
             case 83: //s
-              old = this.inputState.KEY_DOWN;
-              this.inputState.KEY_DOWN = false;
-              if (old !== this.inputState.KEY_DOWN) {
-                  NetUtils.send(gameSocket, NetUtils.events.C_DOWN, [this.inputState.KEY_DOWN]);
-              }
+              keyControl(this.inputState, 'KEY_DOWN', false, NetUtils.events.C_DOWN);
               break;
             case 65: //a
-              old = this.inputState.KEY_LEFT;
-              this.inputState.KEY_LEFT = false;
-              if (old !== this.inputState.KEY_LEFT) {
-                  NetUtils.send(gameSocket, NetUtils.events.C_LEFT, [this.inputState.KEY_LEFT]);
-              }
+              keyControl(this.inputState, 'KEY_LEFT', false, NetUtils.events.C_LEFT);
               break;
             case 87: //w
-              old = this.inputState.KEY_UP;
-              this.inputState.KEY_UP = false;
-              if (old !== this.inputState.KEY_UP) {
-                  NetUtils.send(gameSocket, NetUtils.events.C_UP, [this.inputState.KEY_UP]);
-              }
+              keyControl(this.inputState, 'KEY_UP', false, NetUtils.events.C_UP);
+              break;
+            case 32: //space
+              keyControl(this.inputState, 'KEY_BOOST', false, NetUtils.events.C_BOOST);
+              break;
+            case 16: //shift
+              keyControl(this.inputState, 'KEY_BRAKE', false, NetUtils.events.C_BRAKE);
               break;
           }
         };

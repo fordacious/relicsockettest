@@ -1,4 +1,6 @@
 var BULLET_SPEED = 1;
+var BULLET_DAMAGE = 10;
+var MELEE_DAMAGE = 50;
 
 define([
     'common/bullet',
@@ -21,6 +23,15 @@ define([
             delete this.players[id];
         }
 
+        this.respawnPlayer = function (id, x, y) {
+            var player = this.players[id];
+            player.hp = 100;
+            player.setVel(0,0);
+            player.setPos(x, y);
+            // TODO placeholder for big explosion, explode on next client update
+            // explosion should be based on player velocity
+        }
+
         this.playerFireWeapon = function (playerId, x, y) {
             var player = this.players[playerId];
             var bullet = new Bullet(player);
@@ -34,6 +45,7 @@ define([
 
         this.damagePlayerClient = function (playerId) {
             var player = this.players[playerId];
+            player.hp -= BULLET_DAMAGE;
             explode.call(this, player.color, player.physics.position, player.physics.velocity);
         }
 
@@ -47,6 +59,8 @@ define([
             for (var index in this.shrapnel) {
                 this.shrapnel[index].update(delta, this);
             }
+            // TODO player collisions
+            // TODO if, hp is 0, respawn player somewhere with 0 velocity
             this.destroyedBullets = this.bullets.filter(function(b){ return b.destroyed; });
             this.bullets = this.bullets.filter(function(b){
                 return b.destroyed == false;
@@ -75,6 +89,15 @@ define([
             this.shrapnel = this.shrapnel.filter(function(s){ return s.destroyed == false; });
         }
 
+        function onPlayerHitBullet (player, bullet) {
+            player.hp -= BULLET_DAMAGE;
+            bullet.destroyed = true;
+        }
+
+        function onPlayerHitPlayer (player1, player2) {
+            // TODO
+        }
+
         function hitTest (a, b) {
             var dx = b.physics.position.x - a.physics.position.x;
             var dy = b.physics.position.y - a.physics.position.y;
@@ -88,9 +111,16 @@ define([
                 for (var index in this.bullets) {
                     var bullet = this.bullets[index];
                     if (hitTest(player, bullet)) {
+                        onPlayerHitBullet(player, bullet);
                         NetUtils.broadcast(connections, NetUtils.events.S_PLAYER_HIT, [playerId, index]);
-                        bullet.destroyed = true;
                     }
+                }
+                if (player.hp <= 0) {
+                    var x = Math.random()*this.width;
+                    var y = Math.random()*this.height;
+                    // TODO could have this be an event the same way the client does it
+                    this.respawnPlayer(playerId, x, y);
+                    NetUtils.broadcast(connections, NetUtils.events.S_PLAYER_DIE, [playerId, x, y]);
                 }
             }
         }

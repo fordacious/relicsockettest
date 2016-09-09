@@ -1,5 +1,8 @@
 var boundsBuffer = 20;
-define(['common/physics/physicsObject'], function (PhysicsObject) {
+define([
+    'common/physics/physicsObject',
+    'client/colorutils'
+], function (PhysicsObject, ColorUtils) {
     function rotatePoint (x, y, amount) {
         var cos = Math.cos(amount);
         var sin = Math.sin(amount);
@@ -40,7 +43,7 @@ define(['common/physics/physicsObject'], function (PhysicsObject) {
             context.lineTo(-r + this.physics.position.x, r + this.physics.position.y);
             context.lineTo(r + this.physics.position.x, r + this.physics.position.y);
             context.lineTo(r + this.physics.position.x, -r + this.physics.position.y);
-            context.fillStyle = '#' + (this.color&0xffffff).toString(16);
+            context.fillStyle = ColorUtils.toRGB(this.color);
             context.fill();
             context.closePath();
             context.restore();

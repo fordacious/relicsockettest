@@ -1,4 +1,13 @@
-var URL = 'ws:127.0.0.1:8001'
+/*
+http://localhost:8080/client/index.html?ip=127.0.0.1:8001&name=test&color=0xFF0000
+*/
+var URL = 'ws:' + QueryString().ip;
+var COLOR = QueryString().color;
+if (!parseInt(COLOR) || parseInt(COLOR) === 0)
+{
+    COLOR = Math.random()*0xFFFFFF;
+}
+var NAME = QueryString().name;
 
 requirejs.config({
     baseUrl: '../',
@@ -14,6 +23,29 @@ function runGame (timestamp) {
     }
     window.requestAnimationFrame(runGame.bind(this));
 }
+
+function QueryString () {
+  // This function is anonymous, is executed immediately and 
+  // the return value is assigned to QueryString!
+  var query_string = {};
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i=0;i<vars.length;i++) {
+    var pair = vars[i].split("=");
+        // If first entry with this name
+    if (typeof query_string[pair[0]] === "undefined") {
+      query_string[pair[0]] = decodeURIComponent(pair[1]);
+        // If second entry with this name
+    } else if (typeof query_string[pair[0]] === "string") {
+      var arr = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
+      query_string[pair[0]] = arr;
+        // If third or later entry with this name
+    } else {
+      query_string[pair[0]].push(decodeURIComponent(pair[1]));
+    }
+  } 
+  return query_string;
+};
 
 require([
     '../client/webInputSystem',
@@ -60,8 +92,8 @@ function (WebInputSystem, StubInputSystem, Game, Player, NetUtils) {
     session[NetUtils.events.S_PLAYER_LEAVE] = function (playerId) {
         this.game.removePlayer(playerId);
     }
-    session[NetUtils.events.S_PLAYER_DIE] = function () {
-        // TODO
+    session[NetUtils.events.S_PLAYER_DIE] = function (playerId, x, y) {
+        this.game.respawnPlayer(playerId, x, y);
     }
     session[NetUtils.events.S_OBJECT_POSITION_UPDATE] = function (playerId, position, velocity, rotation) {
         var player = this.game.players[playerId];
@@ -76,6 +108,7 @@ function (WebInputSystem, StubInputSystem, Game, Player, NetUtils) {
     }
     // TODO move to game
     session[NetUtils.events.S_PLAYER_HIT] = function (playerId, bulletIndex) {
+        // TODO may not be able to use bulletIndex
         this.game.bullets[bulletIndex].destroyed = true;
         this.game.damagePlayerClient(playerId);
     }
@@ -85,7 +118,7 @@ function (WebInputSystem, StubInputSystem, Game, Player, NetUtils) {
         var parsedMessage = JSON.parse(message.data);
         console.log("recieved ", parsedMessage);
         if (!connected && parsedMessage.type === NetUtils.events.S_CONNECTION_ACCEPTED) {
-            NetUtils.send(gameSocket, NetUtils.events.C_GAME_JOIN_REQUEST, ["test " + Math.round(Math.random() * 1000), Math.random()*0xFFFFFF]);
+            NetUtils.send(gameSocket, NetUtils.events.C_GAME_JOIN_REQUEST, [NAME, parseInt(COLOR)]);
             connected = true;
         } else {
             for (eventName in session) {
