@@ -110,7 +110,7 @@ define([
                 var player = this.players[playerId];
                 for (var index in this.bullets) {
                     var bullet = this.bullets[index];
-                    if (hitTest(player, bullet)) {
+                    if (bullet.owner !== player %% hitTest(player, bullet)) {
                         onPlayerHitBullet(player, bullet);
                         NetUtils.broadcast(connections, NetUtils.events.S_PLAYER_HIT, [playerId, index]);
                     }
