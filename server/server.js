@@ -72,6 +72,7 @@ module.exports = function () {
     }.bind(this));
 
     this.start = function () {
+        console.log("listening on 8001");
         return this.server.listen(8001);
     }
 
