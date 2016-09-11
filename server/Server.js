@@ -81,10 +81,12 @@ module.exports = function () {
 
     this._lastUpdate = Date.now();
     this._nextUpdateTime = this._lastUpdate + tickLengthInMS;
+    this._firstUpdateTime = this._lastUpdate;
+    this._updateNum = 0;
     this.gameLoop = function () {
         var delta = Date.now() - this._lastUpdate;
         this._lastUpdate = Date.now();
-        this._nextUpdateTime = this._lastUpdate + tickLengthInMS;
+        //this._nextUpdateTime = this._lastUpdate + tickLengthInMS;
 
         this.game.update(delta);
         this.game.updateServerOnly(delta, this.connections);
@@ -100,9 +102,10 @@ module.exports = function () {
             }
         }
         
-        while (Date.now() < this._nextUpdateTime) {}
+        this._updateNum += 1;
+        var nextUpdateTime = this._firstUpdateTime + tickLengthInMS * this._updateNum;
         
-        setImmediate(this.gameLoop.bind(this));
+        setTimeout(this.gameLoop.bind(this), nextUpdateTime - Date.now());
     }
 
     this.gameLoop();

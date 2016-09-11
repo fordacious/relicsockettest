@@ -4,7 +4,7 @@ define([
     'common/netutils',
     'common/inputState'
 ],function (NetUtils, InputState) {
-    return function (gameSocket, onMouseMoveCallback) { // TODO event instead of callback
+    return function (gameSocket, setPlayerRotationCallback) { // TODO event instead of callback
         this.inputState = new InputState();
 
         this.lastOrientationEventTime = 0;
@@ -32,7 +32,8 @@ define([
                 NetUtils.send(gameSocket, NetUtils.events.C_PLAYER_ORIENTATION, [e.pageX, e.pageY]);
                 this.lastOrientationEventTime = now;
             }
-            onMouseMoveCallback(e.pageX, e.pageY);
+            // TODO this is dumb
+            setPlayerRotationCallback(e.pageX, e.pageY);
         }
 
         function keyControl(is, key, down, event) {

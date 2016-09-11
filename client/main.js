@@ -77,6 +77,7 @@ function (WebInputSystem, StubInputSystem, Game, Player, NetUtils) {
                 }.bind(this));
                 isLocal = true;
             } else {
+                // TODO could have the input system recieve from server
                 inputSystem = new StubInputSystem();
             }
             this.game.addPlayer(playerInfo.playerId, new Player(inputSystem, playerInfo.name, playerInfo.color, isLocal));
