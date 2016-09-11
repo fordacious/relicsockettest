@@ -5,7 +5,7 @@ requirejs.config({
     nodeRequire: require
 });
 
-var Server = require('../server/server');
+var Server = requirejs('../server/server');
 
 function main () {
     console.log("starting test server");
