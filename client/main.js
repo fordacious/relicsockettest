@@ -80,7 +80,9 @@ function (WebInputSystem, StubInputSystem, Game, Player, NetUtils) {
                 // TODO could have the input system recieve from server
                 inputSystem = new StubInputSystem();
             }
-            this.game.addPlayer(playerInfo.playerId, new Player(inputSystem, playerInfo.name, playerInfo.color, isLocal));
+            var player = new Player(inputSystem, playerInfo.name, playerInfo.color, isLocal);
+            player.hp = playerInfo.hp;
+            this.game.addPlayer(playerInfo.playerId, player);
         }
         // TODO apply player properties
         this.lastTimestamp = Date.now();
