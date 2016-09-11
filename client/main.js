@@ -48,11 +48,11 @@ function QueryString () {
 };
 
 require([
-    '../client/webInputSystem',
-    '../client/stubInputSystem',
-    '../common/game',
-    '../common/player',
-    '../common/netutils'
+    'client/webInputSystem',
+    'client/stubInputSystem',
+    'common/game',
+    'common/player',
+    'common/netutils'
 ],
 function (WebInputSystem, StubInputSystem, Game, Player, NetUtils) {
     this.lastTimestamp = Date.now();
