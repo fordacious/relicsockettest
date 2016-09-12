@@ -91,6 +91,15 @@ module.exports = function () {
             this._lastUpdate = now;
             this.game.update(delta);
             this.game.updateServerOnly(delta, this.connections);
+            for (var playerId in this.game.players) {
+                var player = this.game.players[playerId];
+                if (now - player.lastUpdateTime > playerUpdateFrequency) {
+                    // TODO if this becomes a problem, pack all players into one broadcast
+                    NetUtils.broadcast(this.connections, NetUtils.events.S_OBJECT_POSITION_UPDATE,
+                        [playerId, player.getPos(), player.getVel(), player.rotation]);
+                    player.lastUpdateTime = now;
+                }
+            }
         }
         // if we are more than 16 milliseconds away from the next tick
         if (now - this._lastUpdate < (tickLengthInMS) - 16) {
