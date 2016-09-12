@@ -81,32 +81,24 @@ module.exports = function () {
     }
 
     this._lastUpdate = Date.now();
-    this._nextUpdateTime = this._lastUpdate + tickLengthInMS;
-    this._firstUpdateTime = this._lastUpdate;
-    this._updateNum = 0;
+    //this._nextUpdateTime = this._lastUpdate + tickLengthInMS;
+    //this._firstUpdateTime = this._lastUpdate;
+    //this._updateNum = 0;
     this.gameLoop = function () {
-        var delta = Date.now() - this._lastUpdate;
-        this._lastUpdate = Date.now();
-        //this._nextUpdateTime = this._lastUpdate + tickLengthInMS;
-
-        this.game.update(delta);
-        this.game.updateServerOnly(delta, this.connections);
-
         var now = Date.now();
-        for (var playerId in this.game.players) {
-            var player = this.game.players[playerId];
-            if (now - player.lastUpdateTime > playerUpdateFrequency) {
-                // TODO if this becomes a problem, pack all players into one broadcast
-                NetUtils.broadcast(this.connections, NetUtils.events.S_OBJECT_POSITION_UPDATE,
-                    [playerId, player.getPos(), player.getVel(), player.rotation]);
-                player.lastUpdateTime = now;
-            }
+        if (this._lastUpdate + (tickLengthInMS) < now) {
+            var delta = now - this._lastUpdate;
+            console.log(delta);
+            this._lastUpdate = now;
+            this.game.update(delta);
+            this.game.updateServerOnly(delta, this.connections);
         }
-        
-        this._updateNum += 1;
-        var nextUpdateTime = this._firstUpdateTime + tickLengthInMS * this._updateNum;
-        
-        setTimeout(this.gameLoop.bind(this), nextUpdateTime - Date.now());
+        // if we are more than 16 milliseconds away from the next tick
+        if (now - this._lastUpdate < (tickLengthInMS) - 16) {
+            setTimeout(this.gameLoop.bind(this)); // sloppy timer
+        } else {
+            setImmediate(this.gameLoop.bind(this)); // ultra accurate method
+        }
     }
 
     this.gameLoop();
