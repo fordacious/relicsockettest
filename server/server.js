@@ -88,7 +88,6 @@ module.exports = function () {
         var now = Date.now();
         if (this._lastUpdate + (tickLengthInMS) < now) {
             var delta = now - this._lastUpdate;
-            console.log(delta);
             this._lastUpdate = now;
             this.game.update(delta);
             this.game.updateServerOnly(delta, this.connections);
